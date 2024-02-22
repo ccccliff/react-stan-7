@@ -1,5 +1,4 @@
 import React from "react";
-import Navigation from "../components/Navigation";
 
 const Home = () => {
   return (
@@ -11,7 +10,6 @@ const Home = () => {
       ) : (
         <p>로그인을 해주세요.</p>
       )}
-      <Navigation />
     </div>
   );
 };

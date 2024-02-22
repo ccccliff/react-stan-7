@@ -1,46 +1,34 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "../axios/auth";
+import { authApi } from "../../axios/auth";
 
-const LoginPage = () => {
+const SignupPage = () => {
   const navigate = useNavigate();
 
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
+  const [nickname, setNickname] = useState("");
 
   return (
     <div>
-      <h1>Login</h1>
-      <p>Login page</p>
+      <h1>Signup</h1>
+      <p>Signup page</p>
 
       <form
         onSubmit={async (e) => {
           e.preventDefault();
-
           try {
-            // (1) 로그인 시도
-            const response = await authApi.post("login", {
+            await authApi.post("/register", {
               id: id,
               password: password,
+              nickname: nickname,
             });
 
-            // (2) localStorage에 토큰 저장
-            if (!response.data.accessToken) {
-              alert("토큰이 없습니다. 고객센터에 문의해주세요.");
-              return;
-            }
-
-            // (3) 로그인 성공 시, 안내 메시지
-            alert("로그인에 성공하였습니다. 메인 페이지로 이동할게용");
-
-            localStorage.setItem("accessToken", response.data.accessToken);
-            localStorage.setItem("userId", response.data.userId);
-            localStorage.setItem("nickname", response.data.nickname);
-
-            // (4) 메인 페이지로 이동
-            navigate("/");
+            alert("회원가입에 성공하였습니다. 로그인 페이지로 이동할게요");
+            navigate("/login");
           } catch (error) {
+            console.log(error);
             alert(error.response.data.message);
           }
         }}
@@ -54,6 +42,15 @@ const LoginPage = () => {
             onChange={(e) => setId(e.target.value)}
           />
         </div>
+        <div>
+          <label htmlFor="nickname">nickname</label>
+          <input
+            type="string"
+            id="nickname"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+          />
+        </div>
 
         <div>
           <label htmlFor="password">Password</label>
@@ -65,15 +62,16 @@ const LoginPage = () => {
           />
         </div>
 
-        <button type="submit">Login</button>
+        <button type="submit">Signup</button>
         <button
           type="button"
           onClick={() => {
-            navigate("/signup");
+            navigate("/login");
           }}
         >
-          회원가입하러가기
+          로그인하러가기
         </button>
+
         <button
           type="button"
           onClick={() => {
@@ -87,4 +85,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignupPage;

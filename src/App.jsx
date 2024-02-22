@@ -2,7 +2,11 @@
 import RouterPage from "./shared/Router";
 
 function App() {
-  return <RouterPage />;
+  return (
+    <>
+      <RouterPage />
+    </>
+  );
 }
 
 export default App;

@@ -1,27 +1,54 @@
 // SearchPage.jsx
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import postsAxios from "../axios/posts";
 
 function SearchPage() {
-  let [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [posts, setPosts] = useState([]);
 
-  let category = searchParams.get("category") || "all";
-  let price = searchParams.get("price") || "any";
+  const userId = searchParams.get("userId");
 
   // URL의 쿼리 스트링을 변경하는 함수
-  const updateSearch = (newCategory, newPrice) => {
-    setSearchParams({ category: newCategory, price: newPrice });
+  const updateSearch = (userId) => {
+    setSearchParams({ userId: userId });
   };
+
+  useEffect(() => {
+    const getPostsByUserId = async () => {
+      const response = await postsAxios.get();
+      setPosts(response.data);
+    };
+
+    getPostsByUserId();
+  }, []);
+
+  const filteredPosts = posts.filter(
+    (post) => post.writerUserId === Number(userId)
+  );
 
   return (
     <div>
-      <h1>Products</h1>
+      <h1>Posting 정보 보기</h1>
       <div>
-        Current search: category={category}, price={price}
+        {userId ? (
+          <p>아이디 {userId}님이 쓰신 글</p>
+        ) : (
+          <p>아래 두 버튼 중 하나를 선택해주세요.</p>
+        )}
+        {/* Current search: category={userId} */}
       </div>
-      {/* 검색 업데이트 예시 */}
-      <button onClick={() => updateSearch("books", "low")}>
-        Search for low-priced books
-      </button>
+
+      <button onClick={() => updateSearch("1")}>1번유저의 글 보기</button>
+      <button onClick={() => updateSearch("2")}>2번유저의 글 보기</button>
+
+      {filteredPosts.map((post) => (
+        <div key={post.id}>
+          <h2>{post.title}</h2>
+          <p>{post.author}</p>
+          <p>{post.body}</p>
+        </div>
+      ))}
     </div>
   );
 }

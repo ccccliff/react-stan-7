@@ -9,9 +9,14 @@ export const authApi = axios.create({
 
 authApi.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (accessToken) {
-      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    if (config.url === "user") {
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken) {
+        config.headers["Authorization"] = `Bearer ${accessToken}`;
+      } else {
+        alert("인증이 필요합니다.");
+        return Promise.reject("인증이 필요합니다.");
+      }
     }
 
     return config;

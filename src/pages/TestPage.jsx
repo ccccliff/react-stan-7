@@ -1,28 +1,30 @@
-import axios from "axios";
 import React from "react";
 import commentsAxios from "../axios/comments";
+import postsAxios from "../axios/posts";
 
 const TestPage = () => {
-  const handleGetPostButtonClick = () => {
-    axios
-      .get("http://localhost:3004/posts")
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  const [posts, setPosts] = React.useState([]);
+  const [comments, setComments] = React.useState([]);
+
+  const handleGetPostButtonClick = async () => {
+    try {
+      const response = await postsAxios.get("/");
+      setPosts(response.data);
+      setComments([]);
+    } catch (error) {
+      console.log(error);
+      alert("포스팅 가져오는 도중 에러가 발생했습니다.");
+    }
   };
 
-  const handleGetCommentsButtonClick = () => {
-    commentsAxios
-      .get("http://localhost:3004/posts")
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  const handleGetCommentsButtonClick = async () => {
+    try {
+      const response = await commentsAxios.get("/");
+      setComments(response.data);
+      setPosts([]);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -35,6 +37,19 @@ const TestPage = () => {
       <button onClick={handleGetCommentsButtonClick}>
         comments가져오기 테스트(로그인필요)
       </button>
+
+      {posts?.map((post) => (
+        <div key={post.id}>
+          <h2>{post.title}</h2>
+          <p>{post.author}</p>
+        </div>
+      ))}
+
+      {comments?.map((comment) => (
+        <div key={comment.id}>
+          <p>{comment.body}</p>
+        </div>
+      ))}
     </div>
   );
 };
